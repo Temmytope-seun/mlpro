@@ -1,5 +1,7 @@
 import os
 import sys
+from src.components.data_transformation import DataTransformation
+from src.components.data_transformation import DataTransformationConfig
 from src.exception import CustomException
 from src.logger import logging
 import pandas as pd
@@ -34,8 +36,8 @@ class DataIngestion:
             logging.info('Data ingestion completed')
 
             return(
-                self.ingestion_config.test_data_path,
-                self.ingestion_config.train_data_path
+                self.ingestion_config.train_data_path,
+                self.ingestion_config.test_data_path
             )
         except Exception as e:
             raise CustomException(e,sys)
@@ -43,4 +45,7 @@ class DataIngestion:
 
 if __name__=="__main__":
     obj = DataIngestion()
-    obj.initiate_data_ingestion()
+    train_set,test_set=obj.initiate_data_ingestion()
+
+    data_transformation=DataTransformation()
+    data_transformation.initiate_data_transformation(train_set,test_set)
