@@ -1,7 +1,7 @@
 import os
 import sys
 import warnings
-warnings.filterwarnings("ignore", message="Could not find the number of physical cores")
+os.environ["LOKY_MAX_CPU_COUNT"] = "8"  # replace with your actual core count
 from src.components.data_transformation import DataTransformation
 from src.components.data_transformation import DataTransformationConfig
 from src.components.model_trainer import ModelTrainer
