@@ -13,7 +13,7 @@ from src.utils import save_object
 
 @dataclass
 class DataTransformationConfig:
-    transformed_train_path: str=os.path.join('artifacts',"preprocessor.pkl")
+    preprocessor_obj_file_path: str=os.path.join('artifacts',"preprocessor.pkl")
 
 class DataTransformation:
     def __init__(self):
@@ -58,7 +58,6 @@ class DataTransformation:
             preprocessing_obj = self.get_transformer()
 
             target_col_name="math_score"
-            num_cols = ['reading_score', 'writing_score']
 
             input_feature_train_df=train_df.drop(columns=[target_col_name],axis=1)
             target_feature_train_df=train_df[target_col_name]
@@ -78,9 +77,9 @@ class DataTransformation:
 
             logging.info('Saved preprocessing object')
 
-            save_object(self.transformation_config.transformed_train_path, preprocessing_obj)
+            save_object(self.transformation_config.preprocessor_obj_file_path, preprocessing_obj)
 
-            return(train_arr, test_arr, self.transformation_config.transformed_train_path )
+            return(train_arr, test_arr, self.transformation_config.preprocessor_obj_file_path )
 
         except Exception as e:
             raise CustomException(e,sys)
