@@ -10,8 +10,8 @@ def get_requirements(file_path:str)->List[str]:
     return requirements
 
 setup(
-    name="mlpro",
-    version="0.0.1",
+    name="studentPerformance",
+    version="0.1.0",
     packages=find_packages(),
     install_requires=get_requirements("requirements.txt"),
     author="Temmy",
