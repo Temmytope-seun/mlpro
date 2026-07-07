@@ -1,122 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predict Math Score</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f4f6f9;
-        }
-        .form-card {
-            max-width: 640px;
-            margin: 60px auto;
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-        }
-        .navbar-brand {
-            font-weight: 700;
-        }
-        .result-box {
-            max-width: 640px;
-            margin: 0 auto 40px;
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Predict Math Score — Student Performance Predictor{% endblock %}
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">Student Performance Predictor</a>
-        </div>
-    </nav>
+{% block content %}
 
+<section class="predict-hero text-center">
     <div class="container">
-
-        {% if results is defined and results is not none %}
-        <div class="alert alert-success result-box mt-4 text-center">
-            <h4 class="mb-0">Predicted Math Score: {{ results }}</h4>
-        </div>
-        {% endif %}
-
-        <div class="card form-card p-4 mb-5">
-            <h2 class="text-center mb-4">Predict Math Score</h2>
-            <form action="{{ url_for('predict_datapoint') }}" method="post">
-
-                <div class="mb-3">
-                    <label class="form-label">Gender</label>
-                    <select class="form-select" name="gender" required>
-                        <option selected disabled value="">Select gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Race / Ethnicity</label>
-                    <select class="form-select" name="race_ethnicity" required>
-                        <option selected disabled value="">Select group</option>
-                        <option value="group A">Group A</option>
-                        <option value="group B">Group B</option>
-                        <option value="group C">Group C</option>
-                        <option value="group D">Group D</option>
-                        <option value="group E">Group E</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Parental Level of Education</label>
-                    <select class="form-select" name="parental_level_of_education" required>
-                        <option selected disabled value="">Select education level</option>
-                        <option value="some high school">Some High School</option>
-                        <option value="high school">High School</option>
-                        <option value="some college">Some College</option>
-                        <option value="associate's degree">Associate's Degree</option>
-                        <option value="bachelor's degree">Bachelor's Degree</option>
-                        <option value="master's degree">Master's Degree</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Lunch</label>
-                    <select class="form-select" name="lunch" required>
-                        <option selected disabled value="">Select lunch type</option>
-                        <option value="standard">Standard</option>
-                        <option value="free/reduced">Free/Reduced</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Test Preparation Course</label>
-                    <select class="form-select" name="test_preparation_course" required>
-                        <option selected disabled value="">Select status</option>
-                        <option value="none">None</option>
-                        <option value="completed">Completed</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Reading Score (0-100)</label>
-                    <input type="number" class="form-control" name="reading_score" min="0" max="100" required>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Writing Score (0-100)</label>
-                    <input type="number" class="form-control" name="writing_score" min="0" max="100" required>
-                </div>
-
-                <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary btn-lg">Predict</button>
-                </div>
-
-            </form>
-        </div>
-
+        <span class="eyebrow"><i class="bi bi-cpu"></i> Live Inference</span>
+        <h1 class="display-5 mt-3">Predict Math Score</h1>
+        <p class="lead mt-2" style="color:#aab2c8;">Fill in the student's profile to get an instant, model-generated prediction.</p>
     </div>
+</section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<section class="predict-shell">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+
+            <div class="col-lg-7 fade-up">
+                <div class="card form-card">
+                    <div class="card-body">
+                        <h5 class="mb-4"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Student Profile</h5>
+                        <form action="{{ url_for('predict_datapoint') }}" method="post" novalidate>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Gender</label>
+                                    <select class="form-select" name="gender" required>
+                                        <option selected disabled value="">Select gender</option>
+                                        <option value="male" {% if form_data and form_data.gender=='male' %}selected{% endif %}>Male</option>
+                                        <option value="female" {% if form_data and form_data.gender=='female' %}selected{% endif %}>Female</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Race / Ethnicity</label>
+                                    <select class="form-select" name="race_ethnicity" required>
+                                        <option selected disabled value="">Select group</option>
+                                        {% for g in ['group A','group B','group C','group D','group E'] %}
+                                        <option value="{{ g }}" {% if form_data and form_data.race_ethnicity==g %}selected{% endif %}>{{ g|title }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Parental Level of Education</label>
+                                    <select class="form-select" name="parental_level_of_education" required>
+                                        <option selected disabled value="">Select education level</option>
+                                        {% for e in ["some high school","high school","some college","associate's degree","bachelor's degree","master's degree"] %}
+                                        <option value="{{ e }}" {% if form_data and form_data.parental_level_of_education==e %}selected{% endif %}>{{ e|title }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Lunch Type</label>
+                                    <select class="form-select" name="lunch" required>
+                                        <option selected disabled value="">Select lunch type</option>
+                                        <option value="standard" {% if form_data and form_data.lunch=='standard' %}selected{% endif %}>Standard</option>
+                                        <option value="free/reduced" {% if form_data and form_data.lunch=='free/reduced' %}selected{% endif %}>Free/Reduced</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Test Preparation Course</label>
+                                    <select class="form-select" name="test_preparation_course" required>
+                                        <option selected disabled value="">Select status</option>
+                                        <option value="none" {% if form_data and form_data.test_preparation_course=='none' %}selected{% endif %}>None</option>
+                                        <option value="completed" {% if form_data and form_data.test_preparation_course=='completed' %}selected{% endif %}>Completed</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12"><hr class="my-2"></div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label d-flex justify-content-between">
+                                        Reading Score <span id="readingLabel" class="range-value">{{ form_data.reading_score if form_data else 70 }}</span>
+                                    </label>
+                                    <div class="range-row">
+                                        <input type="range" class="form-range" id="readingRange" min="0" max="100" value="{{ form_data.reading_score if form_data else 70 }}">
+                                    </div>
+                                    <input type="number" class="form-control mt-2" id="readingInput" name="reading_score" min="0" max="100" value="{{ form_data.reading_score if form_data else 70 }}" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label d-flex justify-content-between">
+                                        Writing Score <span id="writingLabel" class="range-value">{{ form_data.writing_score if form_data else 70 }}</span>
+                                    </label>
+                                    <div class="range-row">
+                                        <input type="range" class="form-range" id="writingRange" min="0" max="100" value="{{ form_data.writing_score if form_data else 70 }}">
+                                    </div>
+                                    <input type="number" class="form-control mt-2" id="writingInput" name="writing_score" min="0" max="100" value="{{ form_data.writing_score if form_data else 70 }}" required>
+                                </div>
+                            </div>
+
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-gradient btn-lg" id="submitBtn">
+                                    <i class="bi bi-magic me-2"></i>Predict Math Score
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 fade-up">
+                <div class="card result-card h-100">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        {% if results is defined and results is not none %}
+                            <div class="text-center" id="resultBlock" data-score="{{ results }}">
+                                <h6 class="text-muted text-uppercase small mb-4">Predicted Result</h6>
+                                <div class="gauge-wrap">
+                                    <div class="gauge-ring" id="gaugeRing">
+                                        <div class="gauge-inner">
+                                            <span class="gauge-score" id="gaugeScore">0</span>
+                                            <span class="gauge-label">/ 100</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="gradePill"></div>
+                                <div class="text-start mt-4" id="insightList"></div>
+                                <a href="{{ url_for('predict_datapoint') }}" class="btn btn-outline-secondary btn-sm mt-4">
+                                    <i class="bi bi-arrow-repeat me-1"></i>Run Another Prediction
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="result-placeholder">
+                                <div class="icon-badge"><i class="bi bi-bar-chart-line"></i></div>
+                                <h5>No prediction yet</h5>
+                                <p class="small mb-0">Fill out the form and submit to see the predicted math score here.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    syncRange('readingRange', 'readingInput', 'readingLabel');
+    syncRange('writingRange', 'writingInput', 'writingLabel');
+
+    const resultBlock = document.getElementById('resultBlock');
+    if (resultBlock) {
+      const score = Math.max(0, Math.min(100, parseFloat(resultBlock.dataset.score)));
+      animateGauge(score);
+    }
+
+    const form = document.querySelector('.form-card form');
+    if (form) {
+      form.addEventListener('submit', function () {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Predicting…';
+      });
+    }
+  });
+</script>
+{% endblock %}
