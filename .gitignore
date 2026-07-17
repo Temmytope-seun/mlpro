@@ -222,3 +222,6 @@ logs/
 # Generated ML artifacts / training output
 artifacts/
 catboost_info/
+
+# AWS Beanstalk build
+app.py
